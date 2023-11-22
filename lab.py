@@ -19,14 +19,14 @@ def add_toppings(pizza):
         pizza.add_topping("Mushroom")
 
 def add_crust(pizza):
-    crust_type = "Standard"
+    CRUST_VALUES = {
+        0: "Standard",
+        1: "Thin-crust",
+        2: "Deep-dish",
+        3: "Hand-tossed"
+    }
 
-    if crust_var.get() == 1:
-        crust_type = "Thin-crust"
-    elif crust_var.get() == 2:
-        crust_type = "Deep-dish"
-    elif crust_var.get() == 3:
-        crust_type = "Hand-tossed"
+    crust_type = CRUST_VALUES[crust_var.get()]
     
     pizza.set_crust_type(crust_type)
 
@@ -64,6 +64,10 @@ def print_toppings(pizza):
     toppings = pizza.get_toppings()
     output.insert(END, "Toppings: ")
     output.insert(END, "Cheese ")
+    
+    if len(toppings) == 0:
+        return
+    
     for topping in toppings:
         output.insert(END, topping + " ")
     output.insert(END, "\n")
@@ -73,7 +77,7 @@ def print_crust_type(pizza):
     output.insert(END, "Crust type: " + crust_type + "\n")
 
 def submit_order():
-    pizza_order = size_entry.get()
+    pizza_order_size = size_entry.get()
     pizza_order = calculate_pizza_cost()
     
     if pizza_order is None:
@@ -81,9 +85,8 @@ def submit_order():
     
     tax, final_cost, pizza = pizza_order
     
-    output.insert(END, "\n")
     output.insert(END, "Your Receipt...\n")
-    output.insert(END, "Your order: " + pizza_order + "\n")
+    output.insert(END, "Your order: " + pizza_order_size + "\n")
     print_crust_type(pizza)
     print_toppings(pizza)
     
