@@ -74,12 +74,12 @@ def print_crust_type(pizza):
 
 def submit_order():
     pizza_order = size_entry.get()
-    total_cost = calculate_pizza_cost()
+    pizza_order = calculate_pizza_cost()
     
-    if total_cost is None:
+    if pizza_order is None:
         return
     
-    tax, final_cost, pizza = total_cost
+    tax, final_cost, pizza = pizza_order
     
     output.insert(END, "\n")
     output.insert(END, "Your Receipt...\n")
