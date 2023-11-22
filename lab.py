@@ -143,18 +143,11 @@ Check2.pack()
 Check3.pack()
 Check4.pack()
 
-
-err_message = 'Error here'
-# Add Error Message
-error_message = Label(window, text=err_message , font="arial 16 bold")
-error_message.pack()
-
 # Adds button
 submit_button = Button(window, text="Submit your order:", width = 30, command=submit_order)
 submit_button.pack()
 
 output = Text(window, width=30, height=8, wrap=WORD, background="white")
 output.pack()
-
 
 window.mainloop()
