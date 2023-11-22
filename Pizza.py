@@ -12,8 +12,8 @@ class Pizza:
     self._toppings.append(topping)
     
   def calculate_toppings(self):
-    base_price = 1.25
-    return base_price * len(self._toppings)
+    BASE_PRICE = 1.25
+    return BASE_PRICE * len(self._toppings)
   
   def set_crust_type(self, crust_type):
     self._crust_type = crust_type

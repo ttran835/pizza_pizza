@@ -49,7 +49,7 @@ def calculate_pizza_cost():
         mb.showerror(title="Size Error", message='Price for pizza size not found.')
         return None
     
-    pizza = Pizza(size_entry.get(), crust_var.get(), pizza_price)
+    pizza = Pizza(pizza_size, crust_var.get(), pizza_price)
 
     add_toppings(pizza)
     add_crust(pizza)
