@@ -1,70 +1,99 @@
 from tkinter import *
+from tkinter import messagebox as mb
 
-def click():
-    pizza_order = textEntry.get()
-    if total_cost() == "no choices":
-        output.insert(END, "Please enter a valid response by reloading the page.")
-        textEntry.delete(0, END)
-    else:
-        output.insert(END, "Your Receipt...\n")
-        output.insert(END, "Your order: " + pizza_order + "\n")
+from Pizza import Pizza
 
-        crust_type = "Standard"
+def is_valid_size(size):
+    sizes = ['small', 'medium', 'large']
+    return size.lower() in sizes
+    
+    
+def add_toppings(pizza):
+    if pepperoni.get() == 1:
+        pizza.add_topping("Pepperoni")
+    if sausage.get() == 1:
+        pizza.add_topping("Sausage")
+    if onion.get() == 1:
+        pizza.add_topping("Onion")
+    if mushroom.get() == 1:
+        pizza.add_topping("Mushroom")
 
-        if crust_var.get() == 1:
-            crust_type = "Thin-crust"
-        elif crust_var.get() == 2:
-            crust_type = "Deep-dish"
-        elif crust_var.get() == 3:
-            crust_type = "Hand-tossed"
-        output.insert(END, "Crust type: " + crust_type + "\n")
+def add_crust(pizza):
+    CRUST_VALUES = {
+        0: "Standard",
+        1: "Thin-crust",
+        2: "Deep-dish",
+        3: "Hand-tossed"
+    }
 
-        output.insert(END, "Toppings: ")
-        output.insert(END, "Cheese ")
-        if pepperoni.get() == 1:
-            output.insert(END, "Pepperoni ")
-        if sausage.get() == 1:
-            output.insert(END, "Sausage ")
-        if onion.get() == 1:
-            output.insert(END, "Onion ")
-        if mushroom.get() == 1:
-            output.insert(END, "Mushroom ")
-        
-        output.insert(END, "\n")
-        output.insert(END, f"Tax: ${total_cost()[0]:.2f}\n")
-        output.insert(END, f"Your final cost is ${total_cost()[1]:.2f}.")
+    crust_type = CRUST_VALUES[crust_var.get()]
+    
+    pizza.set_crust_type(crust_type)
 
-
-def total_cost():
-    cost = 0
-    toppings = 0
+def calculate_pizza_cost():
     TAX_PERCENTAGE = 0.0875
 
-    if textEntry.get().lower() == "small":
-        cost = 10.99
-    elif textEntry.get().lower() == "medium":
-        cost = 12.99
-    elif textEntry.get().lower() == "large":
-        cost = 14.99
-    else:
-        return "no choices"
+    pizza_size = size_entry.get().lower()
+    if is_valid_size(pizza_size) is False:
+        mb.showerror(title="Size Error", message='Please enter a valid size: small, medium, large.')
+        return None
+    
+    PIZZA_PRICES = {
+        'small': 10.99,
+        'medium': 12.99,
+        'large': 14.99
+    }
+    
+    pizza_price = PIZZA_PRICES[pizza_size]
+    if pizza_price is None:
+        mb.showerror(title="Size Error", message='Price for pizza size not found.')
+        return None
+    
+    pizza = Pizza(pizza_size, crust_var.get(), pizza_price)
 
+    add_toppings(pizza)
+    add_crust(pizza)
+        
+    total_pizza_price = pizza.get_total_price()
+    total_cost = total_pizza_price + (total_pizza_price * TAX_PERCENTAGE)
 
-    if pepperoni.get() == 1:
-        cost += 1.25
-    if sausage.get() == 1:
-        cost += 1.25
-    if onion.get() == 1:
-        cost += 1.25
-    if mushroom.get() == 1:
-        cost += 1.25
-
-    cost = cost + (cost * TAX_PERCENTAGE)
-
-    return [cost * TAX_PERCENTAGE, cost]
+    return [total_cost, total_pizza_price, pizza]
     
 
+def print_toppings(pizza):
+    toppings = pizza.get_toppings()
+    output.insert(END, "Toppings: ")
+    output.insert(END, "Cheese ")
+    
+    if len(toppings) == 0:
+        return
+    
+    for topping in toppings:
+        output.insert(END, topping + " ")
+    output.insert(END, "\n")
 
+def print_crust_type(pizza):
+    crust_type = pizza.get_crust_type()
+    output.insert(END, "Crust type: " + crust_type + "\n")
+
+def submit_order():
+    pizza_order_size = size_entry.get()
+    pizza_order = calculate_pizza_cost()
+    
+    if pizza_order is None:
+        return
+    
+    tax, final_cost, pizza = pizza_order
+    
+    output.insert(END, "Your Receipt...\n")
+    output.insert(END, "Your order: " + pizza_order_size + "\n")
+    print_crust_type(pizza)
+    print_toppings(pizza)
+    
+    output.insert(END, "\n")
+    
+    output.insert(END, f"Tax: ${tax:.2f}\n")
+    output.insert(END, f"Your final cost is ${final_cost:.2f}.")
 
 
 window = Tk()
@@ -81,8 +110,8 @@ name_label = Label(window, text="Enter your pizza size:", bg= "yellow", fg="blac
 name_label.pack()
 
 # Adds textfield
-textEntry = Entry(window, width=15, bg="white", bd= 2, font="arial 16 bold", )
-textEntry.pack()
+size_entry = Entry(window, width=15, bg="white", bd= 2, font="arial 16 bold", )
+size_entry.pack()
 
 # Adds label
 crust_label = Label(window, text="Select crust:", bg="yellow", fg="black", font="arial 16 bold")
@@ -117,13 +146,11 @@ Check2.pack()
 Check3.pack()
 Check4.pack()
 
-
 # Adds button
-submit_button = Button(window, text="Submit your order:", width = 30, command=click)
+submit_button = Button(window, text="Submit your order:", width = 30, command=submit_order)
 submit_button.pack()
 
 output = Text(window, width=30, height=8, wrap=WORD, background="white")
 output.pack()
-
 
 window.mainloop()
