@@ -24,8 +24,3 @@ class Pizza:
   def get_total_price(self):
     return self._price + self.calculate_toppings()
   
-
-  
-
-  
-  
